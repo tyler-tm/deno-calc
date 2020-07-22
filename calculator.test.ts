@@ -26,3 +26,9 @@ Deno.test("Nested parentheses", () => {
   const expected = 2;
   assertEquals(calculate(input), expected);
 });
+
+Deno.test("Multi-digit numbers", () => {
+  const input = "149+57-106";
+  const expected = 100;
+  assertEquals(calculate(input), expected);
+});

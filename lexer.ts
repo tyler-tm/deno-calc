@@ -12,7 +12,7 @@ export const tokenize = (input: string): TokenNode => {
   let currentNode: TokenNode = tokenNode();
   const head = currentNode;
   for (let i = 0; i < input.length; i++) {
-    const c = input.charAt(i);
+    let c = input.charAt(i);
     if (c.localeCompare(" ") === 0) {
       continue;
     }
@@ -20,6 +20,12 @@ export const tokenize = (input: string): TokenNode => {
     if (tokenType === null) {
       console.error(`Invalid character: ${c}`);
       throw "Invalid input character";
+    }
+    if (tokenType === TokenType.NUMBER) {
+      while (toTokenType(input.charAt(i + 1)) === TokenType.NUMBER) {
+        i++;
+        c += input.charAt(i);
+      }
     }
     currentNode.type = tokenType;
     currentNode.value = c;
