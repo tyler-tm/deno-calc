@@ -1,12 +1,14 @@
 import { TokenType, TokenNode, AstNode } from "./types.ts";
 
-const OPERATORS = new Map([["+", 1], ["-", 1], ["*", 2], ["/", 2]]);
+const OPERATORS: Map<string, number> = new Map(
+  [["+", 1], ["-", 1], ["*", 2], ["/", 2]],
+);
 
-export const isNumber = (s: string) => s >= "0" && s <= "9";
+export const isNumber = (s: string): boolean => s >= "0" && s <= "9";
 
-export const isOperator = (s: string) => s.length === 1 && OPERATORS.has(s);
+export const isOperator = (s: string): boolean => OPERATORS.has(s);
 
-export const isParen = (s: string) => s === "(" || s === ")";
+export const isParen = (s: string): boolean => s === "(" || s === ")";
 
 export const toPrecedence = (op: string): number => OPERATORS.get(op) || -1;
 
