@@ -10,6 +10,8 @@ export const isParen = (s: string) => s === "(" || s === ")";
 
 export const toPrecedence = (op: string): number => OPERATORS.get(op) || -1;
 
+export const last = <T>(arr: T[]): T => arr[arr.length - 1];
+
 export const tokenNode = (
   type = TokenType.NUMBER,
   value = "",

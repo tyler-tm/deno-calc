@@ -1,5 +1,5 @@
 import { TokenNode, TokenType, AstNode } from "./types.ts";
-import { toPrecedence, astNode } from "./helpers.ts";
+import { toPrecedence, astNode, last } from "./helpers.ts";
 
 const pushExpressionToOutputStack = (
   operatorStack: string[],
@@ -30,7 +30,7 @@ export const parseList = (head: TokenNode): AstNode | null => {
         break;
       case TokenType.OPERATOR:
         while (
-          toPrecedence(operatorStack[operatorStack.length - 1]) >=
+          toPrecedence(last(operatorStack)) >=
             toPrecedence(currentTokenNode.value)
         ) {
           pushExpressionToOutputStack(operatorStack, outputStack);
@@ -45,7 +45,7 @@ export const parseList = (head: TokenNode): AstNode | null => {
         } else if (
           currentTokenNode.value.localeCompare(")") === 0
         ) {
-          while (operatorStack[operatorStack.length - 1] !== "(") {
+          while (last(operatorStack) !== "(") {
             pushExpressionToOutputStack(operatorStack, outputStack);
           }
           operatorStack.pop();
