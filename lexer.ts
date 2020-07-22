@@ -18,6 +18,7 @@ export const tokenize = (input: string): TokenNode => {
     }
     const tokenType = toTokenType(c);
     if (tokenType === null) {
+      console.error(`Invalid character: ${c}`);
       throw "Invalid input character";
     }
     currentNode.type = tokenType;

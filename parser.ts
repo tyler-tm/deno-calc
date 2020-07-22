@@ -19,7 +19,7 @@ const pushExpressionToOutputStack = (
 *  Parses a linked list of tokens and outputs an AST, following Dijkstra's Shunting-Yard algorithm
 *  https://en.wikipedia.org/wiki/Shunting-yard_algorithm
 */
-export const parseList = (head: TokenNode): AstNode | null => {
+export const parseList = (head: TokenNode): AstNode => {
   let currentTokenNode: TokenNode | null = head;
   const operatorStack: string[] = [];
   const outputStack: AstNode[] = [];
@@ -57,5 +57,9 @@ export const parseList = (head: TokenNode): AstNode | null => {
   while (outputStack.length > 1) {
     pushExpressionToOutputStack(operatorStack, outputStack);
   }
-  return outputStack.pop() || null;
+  const result = outputStack.pop();
+  if (!result) {
+    throw "Invalid token set";
+  }
+  return result;
 };
