@@ -1,7 +1,7 @@
 export enum TokenType {
-  NUMBER = "NUMBER",
-  OPERATOR = "OPERATOR",
-  PAREN = "PAREN",
+  NUMBER,
+  OPERATOR,
+  PAREN,
 }
 
 export type TokenNode = {
