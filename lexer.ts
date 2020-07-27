@@ -1,5 +1,16 @@
+import reduce from "https://deno.land/x/denofun/reduce.ts";
+import split from "https://deno.land/x/denofun/split.ts";
+import curry from "https://deno.land/x/denofun/curry.ts";
+import compose from "https://deno.land/x/denofun/compose.ts";
 import { TokenNode, TokenType } from "./types.ts";
-import { isNumber, isOperator, isParen, tokenNode } from "./helpers.ts";
+import {
+  isNumber,
+  isOperator,
+  isParen,
+  tokenNode,
+  tail,
+  isSpace,
+} from "./helpers.ts";
 
 // deno-fmt-ignore
 const toTokenType = (tokenValue: string): TokenType | null =>
@@ -9,13 +20,13 @@ const toTokenType = (tokenValue: string): TokenType | null =>
   null;
 
 const appendToken = (
-  previousAndHead: [TokenNode | null, TokenNode | null],
+  head: TokenNode | null,
   inputChar: string,
-): [TokenNode | null, TokenNode | null] => {
-  const [previousNode, headNode] = previousAndHead;
-  if (inputChar.localeCompare(" ") === 0) {
-    return [previousNode, headNode];
+): TokenNode | null => {
+  if (isSpace(inputChar)) {
+    return head;
   }
+  const previousNode = tail(head);
   const tokenType = toTokenType(inputChar);
   if (tokenType === null) {
     console.error(`Invalid character: ${inputChar}`);
@@ -26,23 +37,24 @@ const appendToken = (
     previousNode.type === TokenType.NUMBER
   ) {
     previousNode.value += inputChar;
-    return [previousNode, headNode];
+    return head;
   }
-  const newNode = { type: tokenType, value: inputChar, next: null };
+  const newNode = tokenNode(tokenType, inputChar);
   if (previousNode === null) {
-    return [newNode, newNode];
-  } else {
-    previousNode.next = newNode;
-    return [newNode, headNode];
+    return newNode;
   }
-};
-
-export const tokenize = (input: string): TokenNode | null => {
-  const inputArray = input.split("");
-  let currentNode: TokenNode | null = null;
-  const [_, head] = inputArray.reduce(
-    appendToken,
-    [currentNode, currentNode],
-  );
+  previousNode.next = newNode;
   return head;
 };
+
+const toTokenList: (_: string[]) => TokenNode = curry(reduce)(
+  appendToken,
+  null,
+);
+
+const toCharacterArray: (_: string) => string[] = curry(split)("");
+
+export const tokenize: (_: string) => TokenNode | null = compose(
+  toTokenList,
+  toCharacterArray,
+);
