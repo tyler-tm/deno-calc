@@ -8,32 +8,41 @@ const toTokenType = (tokenValue: string): TokenType | null =>
   isParen(tokenValue)    ? TokenType.PAREN    :
   null;
 
-export const tokenize = (input: string): TokenNode => {
-  let currentNode: TokenNode = tokenNode();
-  const head = currentNode;
-  for (let i = 0; i < input.length; i++) {
-    let tokenValue = input.charAt(i);
-    if (tokenValue.localeCompare(" ") === 0) {
-      continue;
-    }
-    const tokenType = toTokenType(tokenValue);
-    if (tokenType === null) {
-      console.error(`Invalid character: ${tokenValue}`);
-      throw "Invalid input character";
-    }
-    while (
-      tokenType === TokenType.NUMBER &&
-      toTokenType(input.charAt(i + 1)) === TokenType.NUMBER
-    ) {
-      tokenValue += input.charAt(++i);
-    }
-    currentNode.type = tokenType;
-    currentNode.value = tokenValue;
-    if (i < input.length - 1) {
-      const newNode = tokenNode();
-      currentNode.next = newNode;
-      currentNode = newNode;
-    }
+const appendToken = (
+  previousAndHead: [TokenNode | null, TokenNode | null],
+  inputChar: string,
+): [TokenNode | null, TokenNode | null] => {
+  const [previousNode, headNode] = previousAndHead;
+  if (inputChar.localeCompare(" ") === 0) {
+    return [previousNode, headNode];
   }
+  const tokenType = toTokenType(inputChar);
+  if (tokenType === null) {
+    console.error(`Invalid character: ${inputChar}`);
+    throw "Invalid input character";
+  }
+  if (
+    tokenType === TokenType.NUMBER && previousNode &&
+    previousNode.type === TokenType.NUMBER
+  ) {
+    previousNode.value += inputChar;
+    return [previousNode, headNode];
+  }
+  const newNode = { type: tokenType, value: inputChar, next: null };
+  if (previousNode === null) {
+    return [newNode, newNode];
+  } else {
+    previousNode.next = newNode;
+    return [newNode, headNode];
+  }
+};
+
+export const tokenize = (input: string): TokenNode | null => {
+  const inputArray = input.split("");
+  let currentNode: TokenNode | null = null;
+  const [_, head] = inputArray.reduce(
+    appendToken,
+    [currentNode, currentNode],
+  );
   return head;
 };
