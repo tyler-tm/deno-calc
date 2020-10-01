@@ -19,8 +19,8 @@ const pushExpressionToOutputStack = (
 *  Parses a linked list of tokens and outputs an AST, following Dijkstra's Shunting-Yard algorithm
 *  https://en.wikipedia.org/wiki/Shunting-yard_algorithm
 */
-export const parseList = (head: TokenNode): AstNode => {
-  let currentTokenNode: TokenNode | null = head;
+export const parseList = (head: TokenNode | null): AstNode => {
+  let currentTokenNode = head;
   const operatorStack: string[] = [];
   const outputStack: AstNode[] = [];
   while (currentTokenNode !== null) {

@@ -1,13 +1,15 @@
+import compose from "https://deno.land/x/denofun/compose.ts";
 import { tokenize } from "./lexer.ts";
 import { parseList } from "./parser.ts";
 import { traverse } from "./traverser.ts";
 
-const input = Deno.args.join("");
+export const calculate: (_: string) => number = compose(
+  traverse,
+  parseList,
+  tokenize,
+);
 
-export const calculate = (input: string): number => {
-  const tokenHead = tokenize(input); // tokenize into a singly-linked list
-  const ast = parseList(tokenHead); // parse token list into an abstract syntax tree
-  return traverse(ast); // postorder traversal of AST to calculate result
-};
-
-console.log(calculate(input));
+if (Deno.args.length > 0) {
+  const input = Deno.args.join("");
+  console.log(calculate(input));
+}
